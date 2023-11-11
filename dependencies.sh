@@ -34,32 +34,32 @@ do
 done
 
 if $update_confirmed; then
-        if ! [ -x /home/$(logname)/miniconda3 ]; then
-                echo "[OpenFASoC] Conda could not be found. If you have not yet successfully installed the dependencies, you cannot update the dependencies."
-                exit
-        fi
-        export PATH=/home/$(logname)/miniconda3/bin:$PATH
+    if ! [ -x "${HOME}/miniconda3" ]; then
+        echo "[OpenFASoC] Conda could not be found. If you have not yet successfully installed the dependencies, you cannot update the dependencies."
+        exit
+    fi
+    export PATH="${HOME}/miniconda3/bin:$PATH"
 
-        printf "\n[OpenFASoC] Attempting to update Conda using: conda update conda -y \n\n"
-        conda update conda -y
-        if [ $? == 0 ]
-        then
+    printf "\n[OpenFASoC] Attempting to update Conda using: conda update conda -y \n\n"
+    conda update conda -y
+    if [ $? == 0 ]
+    then
         printf "\n\n[OpenFASoC] Conda updated successfully with: conda update conda -y."
-        else
+    else
         printf "\n\n[OpenFASoC] Failed to update Conda using: conda update conda -y."
         printf "[OpenFASoC] Attempting instead to update Conda using: install -c anaconda conda -y"
         conda install -c anaconda conda -y; if [ $? == 0 ]; then
         printf "\n\n[OpenFASoC] Conda updated successfully with: install -c anaconda conda -y"
-        else
+    else
         printf "\n\n[OpenFASoC] Conda could not be updated."; fi
-        fi
+    fi
 
-        update_successful=true
-        printf "\n\n[OpenFASoC] Attempting to update packages using: conda update --all -y \n"
-        conda update --all -y
-        if [ $? == 0 ]; then
+    update_successful=true
+    printf "\n\n[OpenFASoC] Attempting to update packages using: conda update --all -y \n"
+    conda update --all -y
+    if [ $? == 0 ]; then
         printf "[OpenFASoC] Packages updated successfully with: conda update --all -y"
-        else
+    else
         printf "\n\n[OpenFASoC] Failed to update packages using: conda update --all -y."
         printf "Attempting instead to install core packages individually..."
         conda install -c anaconda -c conda-forge -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
@@ -67,7 +67,7 @@ if $update_confirmed; then
         conda install -c anaconda -c conda-forge -c litex-hub open_pdks.sky130a -y; if [ $? != 0 ]; then update_successful=false; echo "open_pdks could not be updated"; fi
         conda install -c anaconda -c conda-forge -c litex-hub openroad -y; if [ $? != 0 ]; then update_successful=false; echo "openroad could not be updated"; fi
         conda install -c anaconda -c conda-forge -c litex-hub yosys -y; if [ $? != 0 ]; then update_successful=false; echo "yosys could not be updated"; fi
-        fi
+    fi
 
         # ngspice_updated=false
         # echo "Updating ngspice..."
@@ -109,7 +109,7 @@ if $update_confirmed; then
         # echo "nspice was successfully updated."
         # fi
         if [ $update_successful ]; then
-        printf "\n\nMagic, netgen, open_pdks, openroad, and yosys updated successfully to latest releases possible given user's Python version (most recent releases if version >=3.8).\n"
+            printf "\n\nMagic, netgen, open_pdks, openroad, and yosys updated successfully to latest releases possible given user's Python version (most recent releases if version >=3.8).\n"
         fi
         exit
 fi
@@ -117,10 +117,10 @@ fi
 
 if which python3 >> /dev/null
 then
-	echo "Python3 exists. Continuing..."
+    echo "Python3 exists. Continuing..."
 else
-	echo "Python3 could not be found. Please install python3 and try again. Exiting..."
-	exit
+    echo "Python3 could not be found. Please install python3 and try again. Exiting..."
+    exit
 fi
 
 ma_ver=$(python3 -c"import sys; print(str(sys.version_info.major))")
@@ -129,12 +129,12 @@ mi_ver=$(python3 -c"import sys; print(str(sys.version_info.minor))")
 if [ "$ma_ver" -lt 3 ]
 then
     echo "[Warning] python version less than 3.* . Not compatible. You atleast need version above or equal to 3.8."
-#     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
+    # sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
 elif [ "$mi_ver" -lt 8 ]
 then
     echo "[Warning] python version less than 3.8 . Not compatible. You atleast need version above or equal to 3.8."
-#     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
+    # sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
 else
     echo "Compatible python version exists: $ma_ver.$mi_ver"
@@ -142,173 +142,173 @@ fi
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null; then
 
-	apt-get update -y
-        apt-get install -y autoconf libtool libfmt-dev automake make g++ gcc
+    sudo apt-get update -y
+    sudo apt-get install -y autoconf libtool libfmt-dev automake make g++ gcc
 
 elif cat /etc/os-release | grep -e "centos" >> /dev/null; then
 
-        yum update -y
-
-        yum install -y autoconf libtool libfmt-dev automake make gcc gcc-c++
+    yum update -y
+    yum install -y autoconf libtool libfmt-dev automake make gcc gcc-c++
 
 fi
 
 # install miniconda3
-if ! [ -x /home/$(logname)/miniconda3 ]
+if ! [ -x "${HOME}/miniconda3" ]
 then
-      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-    && bash ./Miniconda3-latest-Linux-x86_64.sh -b -p /home/$(logname)/miniconda3 \
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    && bash ./Miniconda3-latest-Linux-x86_64.sh -b -p "${HOME}/miniconda3" \
     && rm ./Miniconda3-latest-Linux-x86_64.sh
 else
     echo "[OpenFASoC] Found miniconda3. Continuing the installation...\n"
 fi
 
-if [ $? == 0 ] && [ -x /home/$(logname)/miniconda3/ ]
+if [ $? == 0 ] && [ -x "${HOME}/miniconda3" ]
 then
-        echo "[OpenFASoC] miniconda3 installed successfully. Continuing the installation...\n"
-        if ! grep -q "/home/$(logname)/miniconda3/bin" /home/$(logname)/.bashrc || ! echo "$PATH" | grep -q "/home/$(logname)/miniconda3/bin"; then
-                echo "" >> /home/$(logname)/.bashrc
-                echo 'export PATH="/home/$(logname)/miniconda3/bin:$PATH"' >> /home/$(logname)/.bashrc
-                echo "[OpenFASoC] miniconda3 added to PATH"
-        fi
-	export PATH=/home/$(logname)/miniconda3/bin:$PATH
+    echo "[OpenFASoC] miniconda3 installed successfully. Continuing the installation...\n"
+    if ! grep -q "${HOME}/miniconda3/bin" "${HOME}/.bashrc" || ! echo "$PATH" | grep -q "${HOME}/miniconda3/bin"; then
+        echo "" >> "${HOME}/.bashrc"
+        echo 'export PATH="${HOME}/miniconda3/bin:${PATH}"' >> "${HOME}/.bashrc"
+        echo "[OpenFASoC] miniconda3 added to PATH"
+    fi
+    export PATH="${HOME}/miniconda3/bin:${PATH}"
 else
-	echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
-	exit
+    echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
+    exit
 fi
 
-source /home/$(logname)/miniconda3/etc/profile.d/conda.sh
+source "${HOME}"/miniconda3/etc/profile.d/conda.sh
 
-if [ $? == 0 ] && [ -x /home/$(logname)/miniconda3/ ]
+if [ $? == 0 ] && [ -x "${HOME}/miniconda3" ]
 then
-	conda update -y conda --all
-        conda install python=3.10 -c anaconda -c conda-forge -c litex-hub
-        if [ $? == 0 ];then conda install -c anaconda -c conda-forge -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
-        if [ $? == 0 ];then echo "[OpenFASoC] Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "[OpenFASoC] Failed to install conda packages" ; exit ; fi
+    conda update -y conda --all
+    conda install python=3.10 -c anaconda -c conda-forge -c litex-hub
+    if [ $? == 0 ];then conda install -c anaconda -c conda-forge -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
+    if [ $? == 0 ];then echo "[OpenFASoC] Installed OpenROAD, Yosys, Skywater {PDK, Magic and Netgen successfully" ; else echo "[OpenFASoC] Failed to install conda packages" ; exit ; fi
 else
-	echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
-	exit
+    echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
+    exit
 fi
 
 
 # download packages using pip3 in miniconda3
-export PATH=/home/$(logname)/miniconda3/bin/pip3:$PATH
+export PATH="${HOME}/miniconda3/bin/pip3:${PATH}"
 
 if which pip3 >> /dev/null
 then
-        echo "[OpenFASoC] Pip3 exists"
-        pip3 install -r requirements.txt
-        if [ $? == 0 ]; then
+    echo "[OpenFASoC] Pip3 exists"
+    pip3 install -r requirements.txt
+    if [ $? == 0 ]; then
         echo "[OpenFASoC] Python packages installed successfully."
-        else
+    else
         echo "[OpenFASoC] Python packages could not be installed."
-        fi
+    fi
 else
-        echo "[OpenFASoC] Pip3 not found in miniconda3."
+    echo "[OpenFASoC] Pip3 not found in miniconda3."
 fi
 
 source ~/.bashrc
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
- apt install bison flex libx11-dev libx11-6 libxaw7-dev libreadline6-dev autoconf libtool automake -y
- git clone http://git.code.sf.net/p/ngspice/ngspice
- currentver="$(lsb_release -rs)"
- requiredver="22.04"
- if [ $currentver == $requiredver ]
- then 
-   cd ngspice 
-   sed -i -e 's/--with-readline=yes//g' compile_linux.sh
-  ./compile_linux.sh
- else
-  cd ngspice && ./compile_linux.sh
- fi
+    apt install bison flex libx11-dev libx11-6 libxaw7-dev libreadline6-dev autoconf libtool automake -y
+    git clone http://git.code.sf.net/p/ngspice/ngspice
+    currentver="$(lsb_release -rs)"
+    requiredver="22.04"
+    if [ "$currentver" == "$requiredver" ]
+    then
+        cd ngspice
+        sed -i -e 's/--with-readline=yes//g' compile_linux.sh
+        ./compile_linux.sh
+    else
+        cd ngspice && ./compile_linux.sh
+    fi
 elif cat /etc/os-release | grep "centos" >> /dev/null
 then
- yum install bison flex libX11-devel libX11 libXaw-devel readline-devel autoconf libtool automake -y
- git clone http://git.code.sf.net/p/ngspice/ngspice
- cd ngspice && ./compile_linux.sh
+    yum install bison flex libX11-devel libX11 libXaw-devel readline-devel autoconf libtool automake -y
+    git clone http://git.code.sf.net/p/ngspice/ngspice
+    cd ngspice && ./compile_linux.sh
 fi
 
 if [ $? == 0 ]
 then
- echo "[OpenFASoC] Ngspice is installed. Checking pending. Continuing the installation...\n"
- cd ../
+    echo "[OpenFASoC] Ngspice is installed. Checking pending. Continuing the installation...\n"
+    cd ../
 else
- echo "[OpenFASoC] Failed to install Ngspice"
- exit
+    echo "[OpenFASoC] Failed to install Ngspice"
+    exit
 fi
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
-	export DEBIAN_FRONTEND=noninteractive
-	cd docker/conda/scripts
-	./xyce_install.sh
+    export DEBIAN_FRONTEND=noninteractive
+    cd docker/conda/scripts
+    ./xyce_install.sh
 elif cat /etc/os-release | grep "centos" >> /dev/null
 then
-	cd docker/conda/scripts
-        chmod +x xyce_install_centos.sh
-	./xyce_install_centos.sh
-fi
-
-        if [ $? == 0 ]
-        then
-                echo "[OpenFASoC] Xyce is installed. Checking pending. Continuing the installation...\n"
-        else
-                echo "[OpenFASoC] Failed to install Xyce"
-                exit
-        fi
-
-if cat /etc/os-release | grep "ubuntu" >> /dev/null
-then
-	currentver="$(lsb_release -rs)"
- 	requiredver="22.04"
- 	if [ $currentver == $requiredver ]
- 	then
-	 apt install qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y 
-	 wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.12-1_amd64.deb
-	 dpkg -i klayout_0.28.12-1_amd64.deb
-	else 
-	 apt install qt5-default qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y
-	 wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.12-1_amd64.deb
-	 dpkg -i klayout_0.28.12-1_amd64.deb
-  	 strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5 #https://stackoverflow.com/questions/63627955/cant-load-shared-library-libqt5core-so-5
-	fi
-	apt install time -y
-	elif cat /etc/os-release | grep -e "centos" >> /dev/null
-then
-	yum install qt5-qtbase-devel qt5-qttools-devel qt5-qtxmlpatterns-devel qt5-qtmultimedia-devel qt5-qtmultimedia-widgets-devel qt5-qtsvg-devel ruby ruby-devel python3-devel zlib-devel time -y
-	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.12-0.x86_64.rpm
-	rpm -i klayout-0.28.12-0.x86_64.rpm
-	yum install time -y
-  strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5
-else
-	echo "[OpenFASoC] Cannot install klayout for other linux distrbutions via this script"
+    cd docker/conda/scripts
+    chmod +x xyce_install_centos.sh
+    ./xyce_install_centos.sh
 fi
 
 if [ $? == 0 ]
 then
- echo "[OpenFASoC] Installed Klayout successfully. Checking pending..."
+    echo "[OpenFASoC] Xyce is installed. Checking pending. Continuing the installation...\n"
 else
- echo "[OpenFASoC] Failed to install Klayout successfully"
- exit
+    echo "[OpenFASoC] Failed to install Xyce"
+    exit
 fi
 
-export PATH=/home/$(logname)/miniconda3/:$PATH
-
-if [ -x /home/$(logname)/miniconda3/share/pdk/ ]
+if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
-        if ! grep -q "PDK_ROOT=/home/$(logname)/miniconda3/share/pdk/" /home/$(logname)/.bashrc; then
-                echo "" >> /home/$(logname)/.bashrc
-                echo 'export PDK_ROOT=/home/$(logname)/miniconda3/share/pdk/' >> /home/$(logname)/.bashrc
-        fi
-        export PDK_ROOT=/home/$(logname)/miniconda3/share/pdk/
-        source ~/.bashrc
-        
-        echo "[OpenFASoC] PDK_ROOT is set to /home/$(logname)/miniconda3/share/pdk/. If this variable is empty, try setting PDK_ROOT variable to /home/$(logname)/miniconda3/share/pdk/"
+    currentver="$(lsb_release -rs)"
+    requiredver="22.04"
+    if [ "$currentver" == "$requiredver" ]
+    then
+        apt install qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y
+        wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.12-1_amd64.deb
+        dpkg -i klayout_0.28.12-1_amd64.deb
+    else
+        apt install qt5-default qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y
+        wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.12-1_amd64.deb
+        dpkg -i klayout_0.28.12-1_amd64.deb
+        strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5 #https://stackoverflow.com/questions/63627955/cant-load-shared-library-libqt5core-so-5
+    fi
+    apt install time -y
+elif cat /etc/os-release | grep -e "centos" >> /dev/null
+then
+    yum install qt5-qtbase-devel qt5-qttools-devel qt5-qtxmlpatterns-devel qt5-qtmultimedia-devel qt5-qtmultimedia-widgets-devel qt5-qtsvg-devel ruby ruby-devel python3-devel zlib-devel time -y
+    wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.12-0.x86_64.rpm
+    rpm -i klayout-0.28.12-0.x86_64.rpm
+    yum install time -y
+    strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5
 else
-        echo "[OpenFASoC] PDK not installed"
+    echo "[OpenFASoC] Cannot install klayout for other linux distrbutions via this script"
 fi
+
+if [ $? == 0 ]
+then
+    echo "[OpenFASoC] Installed Klayout successfully. Checking pending..."
+else
+    echo "[OpenFASoC] Failed to install Klayout successfully"
+    exit
+fi
+
+export PATH="${HOME}/miniconda3:$PATH"
+
+if [ -x "${HOME}/miniconda3/share/pdk" ]
+then
+    if ! grep -q "PDK_ROOT=${HOME}/miniconda3/share/pdk" "${HOME}/.bashrc"; then
+        echo "" >> "${HOME}"/.bashrc
+        echo 'export PDK_ROOT="${HOME}/miniconda3/share/pdk"' >> "${HOME}/.bashrc"
+    fi
+    export PDK_ROOT="${HOME}/miniconda3/share/pdk"
+    source ~/.bashrc
+
+    echo "[OpenFASoC] PDK_ROOT is set to '${HOME}/miniconda3/share/pdk'. If this variable is empty, try setting PDK_ROOT variable to '${HOME}/miniconda3/share/pdk'"
+else
+    echo "[OpenFASoC] PDK not installed"
+fi
+
 echo "[OpenFASoC] "
 echo "[OpenFASoC] "
 echo "[OpenFASoC] To access xyce binary, create an alias - xyce='/opt/xyce/xyce_serial/bin/Xyce'"
