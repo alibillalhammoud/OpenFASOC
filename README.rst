@@ -100,6 +100,23 @@ Tapeouts and testing setup
 
 Please refer to our testing setup in our `tapeouts and testing setup section <https://github.com/idea-fasoc/openfasoc-tapeouts>`_.
 
+GDS Factory Documentation
+*************************
+
+Currently scripts automatically populate `~/.bashrc` with exports.
+
+Steps to begin GDS Factory Gen are:
+
+`source ~/miniconda3/bin/activate`
+`conda activate base`
+`bash dependencies.sh`
+`pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu`
+`cd openfasoc/generators/gdsfactory-gen`
+`python3 -m pip install -r requirements.txt`
+`python sky130_nist_tapeout.py gen_opamp —output_gds test.gds`
+`python sky130_nist_tapeout.py test —output_dir test_output_dir`
+
+
 Citation
 ****************
 
