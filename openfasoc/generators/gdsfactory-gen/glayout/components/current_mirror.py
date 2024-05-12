@@ -8,15 +8,16 @@ from glayout.primitives.fet import nmos, pmos
 from glayout.primitives.guardring import tapring
 from glayout.pdk.util.port_utils import add_ports_perimeter	
 from gdsfactory.component import Component
+from typing import Optional 
 
 #@cell
 def current_mirror(
     pdk: MappedPDK, 
-    numcols: int,
-    device: str,
-    with_dummy: bool,
-    with_substrate_tap: bool,
-    with_tie: bool,
+    numcols: int = 3,
+    device: str = 'nfet',
+    with_dummy: Optional[bool] = True,
+    with_substrate_tap: Optional[bool] = True,
+    with_tie: Optional[bool] = True,
     tie_layers: tuple[str,str]=("met2","met1"),
     **kwargs
 ) -> Component:
