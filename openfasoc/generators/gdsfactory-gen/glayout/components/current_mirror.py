@@ -54,7 +54,7 @@ def current_mirror(
 			with_tie=False, 
 			**kwargs
 		)
-	
+	top_level.add_ports(interdigitized_fets.get_ports_list(), prefix="fet_")
 	maxmet_sep = pdk.util_max_metal_seperation()
 	# short source of the fets
 	source_short = top_level << c_route(pdk, interdigitized_fets.ports['A_source_E'], interdigitized_fets.ports['B_source_E'], extension=3*maxmet_sep, viaoffset=False)
