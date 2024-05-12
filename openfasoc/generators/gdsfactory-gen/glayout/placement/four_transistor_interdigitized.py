@@ -32,6 +32,9 @@ def generic_4T_interdigitzed(
         bottomrow = toplvl << two_pfet_interdigitized(pdk,numcols,with_substrate_tap=False,**bottom_kwargs)
     # move
     toprow.movey(pdk.snap_to_2xgrid((evaluate_bbox(bottomrow)[1]/2 + evaluate_bbox(toprow)[1]/2 + pdk.util_max_metal_seperation())))
+    # ports
+    toplvl.add_ports(toprow.get_ports_list(),prefix="toprow_")
+    toplvl.add_ports(bottomrow.get_ports_list(),prefix="bottomrow_")
     # routes
 
     return toplvl

@@ -425,9 +425,6 @@ class CreateCellParameter(GlayoutAction):
             raise NotImplementedError("parameter error checking has not yet been implemented")
         return "\t" + param + ", "
     
-    def __str__(self) -> str:
-        return self.type.__name__ + " " + self.varname + ((" = "+str(self.defaultvalue)) if self.defaultvalue is not None else "")
-    
     @classmethod
     def test(cls):
         tests = list()
@@ -632,7 +629,7 @@ class Route(GlayoutAction):
         port1s = f"{self.toplvl_name}.ports[\"{self.port1}\"]"
         port2s = f"{self.toplvl_name}.ports[\"{self.port2}\"]"
         if "smart" in self.route_type.__name__:
-            return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},{self.compref},{self.toplvl_name},**{str(self.params)})"
+            return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},{self.toplvl_name},{self.compref},**{str(self.params)})"
         return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},**{str(self.params)})"
     
     @classmethod
@@ -673,7 +670,10 @@ class GlayoutCode(GlayoutAction):
         self.update_import_table(two_nfet_interdigitized_aliases,"two_nfet_interdigitized","glayout.placement.two_transistor_interdigitized")
         two_pfet_interdigitized_aliases = list_cartesian_product(["interdigitized","interdigitated"],["pmos","pfet"],True)
         self.update_import_table(two_pfet_interdigitized_aliases,"two_pfet_interdigitized","glayout.placement.two_transistor_interdigitized")
-        self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair",None)
+        four_interdigitized_fet_aliases = list_cartesian_product(["four interdigitized","four  interdigitated"],["fet","fets","mosfet","mosfets"],True)
+        self.update_import_table(four_interdigitized_fet_aliases,"generic_4T_interdigitzed","glayout.placement.four_transistor_interdigitized")
+        self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair",'glayout.components.diff_pair')
+        self.update_import_table(["current mirror", "current_mirror", "current source", "current_source"], "current_mirror", "glayout.components.current_mirror")
         # import routing funcs
         self.update_import_table(["smart route","smart","smart_route"],"smart_route","glayout.routing.smart_route")
         self.update_import_table(["L route","L_route","l route","l_route"],"L_route","glayout.routing.L_route")
