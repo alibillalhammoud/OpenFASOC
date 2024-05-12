@@ -17,7 +17,7 @@ def current_mirror(
     device: str = 'nfet',
     with_dummy: Optional[bool] = True,
     with_substrate_tap: Optional[bool] = True,
-    with_tie: Optional[bool] = True,
+    with_tie: Optional[bool] = False,
     tie_layers: tuple[str,str]=("met2","met1"),
     **kwargs
 ) -> Component:
