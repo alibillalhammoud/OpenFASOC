@@ -1,0 +1,13 @@
+stageone
+create an int parameter called numcols
+place four interdigitized fets called mydiffload with top_row_device 'pfet' bottom_row_device  'pfet' numcols numcols
+place  a diff  pair called mydiff with width 5 fingers numcols dummy False substrate_tap False
+move mydiffload to north of mydiff
+route between mydiffload_toprow_A_source_E and mydiffload_toprow_B_source_E
+route between mydiffload_toprow_A_gate_W and mydiffload_toprow_B_gate_W
+route between mydiffload_bottomrow_A_gate_W and mydiffload_bottomrow_B_gate_W
+route between mydiffload_bottomrow_A_gate_E and mydiffload_toprow_A_gate_E
+route between mydiffload_bottomrow_A_gate_E and mydiffload_toprow_A_gate_E
+route between mydiffload_toprow_A_drain_W  and mydiffload_bottomrow_A_source_W
+route between mydiffload_toprow_B_drain_E and mydiffload_bottomrow_B_source_E
+route between mydiffload_bottomrow_B_drain_W and mydiffload_bottomrow_B_gate_W
