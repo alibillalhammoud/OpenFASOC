@@ -425,6 +425,9 @@ class CreateCellParameter(GlayoutAction):
             raise NotImplementedError("parameter error checking has not yet been implemented")
         return "\t" + param + ", "
     
+    def __str__(self) -> str:
+        return self.type.__name__ + " " + self.varname + ((" = "+str(self.defaultvalue)) if self.defaultvalue is not None else "")
+    
     @classmethod
     def test(cls):
         tests = list()
@@ -629,7 +632,7 @@ class Route(GlayoutAction):
         port1s = f"{self.toplvl_name}.ports[\"{self.port1}\"]"
         port2s = f"{self.toplvl_name}.ports[\"{self.port2}\"]"
         if "smart" in self.route_type.__name__:
-            return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},{self.toplvl_name},{self.compref},**{str(self.params)})"
+            return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},{self.compref},{self.toplvl_name},**{str(self.params)})"
         return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},**{str(self.params)})"
     
     @classmethod
