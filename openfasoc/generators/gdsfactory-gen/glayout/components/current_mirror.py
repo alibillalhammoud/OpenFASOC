@@ -20,7 +20,7 @@ def current_mirror(
     tie_layers: tuple[str,str]=("met2","met1"),
     **kwargs
 ) -> Component:
-	"""An instantiable current mirror that returns a Component object. The current mirror is a two transistor interdigitized structure with a shorted source and gate. It can be instantiated with either nmos or pmos devices. It can also be instantiated with a dummy device, a substrate tap, and a tie layer, and is centered at the origin.
+	"""An instantiable current mirror that returns a Component object. The current mirror is a two transistor interdigitized structure with a shorted source and gate. It can be instantiated with either nmos or pmos devices. It can also be instantiated with a dummy device, a substrate tap, and a tie layer, and is centered at the origin. Transistor A acts as the reference and Transistor B acts as the mirror fet
 
 	Args:
 		pdk (MappedPDK): the process design kit to use
@@ -88,8 +88,8 @@ def current_mirror(
 			pass
 	
 	# add a pwell 
-	# top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
-	# top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
+	top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
+	top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
  
 	# add the substrate tap if specified
 	if with_substrate_tap:
@@ -102,6 +102,5 @@ def current_mirror(
 		top_level.add_ports(subtap_ring.get_ports_list(), prefix="substrate_tap_")
   
 	top_level.add_ports(source_short.get_ports_list(), prefix='purposegndports')
-	
 	top_level << interdigitized_fets
 	return top_level
