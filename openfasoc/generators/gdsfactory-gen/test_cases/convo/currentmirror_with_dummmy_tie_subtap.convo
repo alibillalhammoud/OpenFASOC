@@ -1,0 +1,6 @@
+currentmirror
+create an int parameter called numcols
+place an interdigitized nfet called cmirror_nfet with numcols numcols
+route between cmirror_nfet_A_source_E and cmirror_nfet_B_source_E using c
+route between cmirror_nfet_A_gate_E and cmirror_nfet_B_gate_E using c
+route between cmirror_nfet_A_gate_W and cmirror_nfet_A_drain_W using c
