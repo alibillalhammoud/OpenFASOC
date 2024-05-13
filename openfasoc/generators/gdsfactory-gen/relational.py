@@ -10,13 +10,18 @@ from abc import ABC, abstractmethod
 from importlib import import_module
 from pathlib import Path
 from typing import Callable, Literal, Optional, Union, cast
+
 import nltk
+
+
 def list_cartesian_product(list1: list, list2: list, both: bool=False) -> list:
     """Compute the Cartesian product of two lists and combine elements into a list of strings.
+
     Args:
         list1 (list): The first list.
         list2 (list): The second list.
         both (bool): provide the cartesian product of list1,list2 AND list2,list1
+
     Returns:
         list: A list containing the Cartesian product of the input lists as strings.
     """
@@ -25,6 +30,8 @@ def list_cartesian_product(list1: list, list2: list, both: bool=False) -> list:
     # Combine the elements into a list of strings
     combined_list = [' '.join(map(str, pair)) for pair in cartesian_product]
     return combined_list + (list_cartesian_product(list2,list1,False) if both else [])
+
+
 # used to automatically update supported actions whenever a class which inherits from GlayoutAction is added to this file
 def get_all_derived_classes(class_type, remove_parent: bool=True) -> list:
     """Finds all derived classes of a particular parent type in the current python file\
@@ -40,6 +47,8 @@ def get_all_derived_classes(class_type, remove_parent: bool=True) -> list:
     except ValueError:
         pass
     return glayout_actions
+
+
 def parse_direction(direction: str) -> Union[str,None]:
     """parses a string to see if it contains a valid direction are up/north/above, right/east, left/west, down/south/below
     Args: 
@@ -58,6 +67,9 @@ def parse_direction(direction: str) -> Union[str,None]:
         return 3
     else:
         return None
+
+
+
 class ParametersList:
     """store function parameter information
     self.params is a list with the following format:
@@ -80,6 +92,7 @@ class ParametersList:
         for param_name, param in parameters.items():
             paraminfo = {"name":param_name, 'defaultvalue':param.default, 'type':param.annotation}
             self.params.append(paraminfo)
+
     def __iter__(self):
         return iter(self.params)
     def names(self):
@@ -195,6 +208,7 @@ class ParametersList:
         basic_grammar += f"Glayer -> {self.__cfgformat_from_list(self.__construct_glayers().keys())}\n"
         basic_grammar += f"Paramname -> {self.__cfgformat_from_list(self.names())}\n"
         return basic_grammar
+
     def parse_user_params(self, known_paramsORvars: list, user_input_params: Optional[str]=None):
         """Take user params as a string and parse+error check to produce a dictionary of params
         Args:
@@ -237,12 +251,18 @@ class ParametersList:
             del user_params["kwargs"]
         user_params = str(user_params).replace("None: None,","")
         return user_params
+
+
+
+
 ######################################################
 # Data structures for possible operations with Glayout
 ######################################################
+
 class GlayoutAction(ABC):    
     """each GlayoutAction corresponds to one or several Glayout code operations
     GlayoutActions are convertible to code via the "get_code" method
+
     Args:
         ABC (_type_): _description_
     """
@@ -256,6 +276,8 @@ class GlayoutAction(ABC):
     @abstractmethod
     def test(cls):
         pass
+
+
 class ImportCell(GlayoutAction):
     """Import an existing CellFactory
     The following information is stored:
@@ -344,6 +366,7 @@ class ImportCell(GlayoutAction):
         for testinst in tests:
             print(ImportCell(*testinst).get_code())
     
+
 class CreateCellParameter(GlayoutAction):
     """Create a new cell parameter
     The following information is stored:
@@ -401,35 +424,20 @@ class CreateCellParameter(GlayoutAction):
         if self.reqs is not None:
             raise NotImplementedError("parameter error checking has not yet been implemented")
         return "\t" + param + ", "
-
+    
     def __str__(self) -> str:
         return self.type.__name__ + " " + self.varname + ((" = "+str(self.defaultvalue)) if self.defaultvalue is not None else "")
-
+    
     @classmethod
     def test(cls):
         tests = list()
-
-    
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -632,7 +629,7 @@ def get_code(self) -> str:
-  
         tests.append(["width",float])
         tests.append(["length",float,0])
         tests.append(["fingers",int,3])
         for testinst in tests:
             print(CreateCellParameter(*testinst).get_code())
+
+
 class CreateWorkingVariable(GlayoutAction):
     """create a new working variable
     The following information is stored:
@@ -458,6 +466,8 @@ class CreateWorkingVariable(GlayoutAction):
         tests.append(["pi","3.1415"])
         for testinst in tests:
             print(CreateWorkingVariable(*testinst).get_code())
+
+
 class PlaceCell(GlayoutAction):
     """Place an existing cell at the origin
     The following information is stored:
@@ -500,6 +510,8 @@ class PlaceCell(GlayoutAction):
         tests.append([exp_name,nmos,"mirror","width of 4 length of 1"])
         for testinst in tests:
             print(PlaceCell.get_code(*testinst))
+
+
 class AbsoluteMove(GlayoutAction):
     """Move an existing Component by an absolute (x,y) distance
     The following information is stored:
@@ -527,6 +539,7 @@ class AbsoluteMove(GlayoutAction):
         tests.append(["ref","top",(9,5)])
         for testinst in tests:
             print(AbsoluteMove(*testinst).get_code())
+
 class RelativeMove(GlayoutAction):
     """Move an existing Component relative to another component
     The following information is stored:
@@ -537,6 +550,7 @@ class RelativeMove(GlayoutAction):
         strdirection: str to use in creating the comment for the move
     """
     move_index = int(0)
+
     #@validate_call
     def __init__(self, name_of_component_to_move: str, toplvl_name: str, relative_comp: str, direction: str, separation: str="maxmetalsep"):
         """Store all information neccessary to move a Component relative to another component
@@ -581,9 +595,12 @@ class RelativeMove(GlayoutAction):
         l4 = f"remove_ports_with_prefix({self.toplvl_name},\"{self.name}_\")"
         l5 = f"{self.toplvl_name}.add_ports({self.name}_ref.get_ports_list(),prefix=\"{self.name}_\")"
         return l1 + "\n" + l2 + "\n" + l3 + "\n" + l4+ "\n" + l5
+
     @classmethod
     def test(cls):
         raise NotImplementedError("testing RelativeMove has not yet been implemented")
+
+
 class Route(GlayoutAction):
     """Route between two existing Ports (port1->port2)
     The following information is stored:
@@ -617,35 +634,22 @@ class Route(GlayoutAction):
         if "smart" in self.route_type.__name__:
             return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},{self.compref},{self.toplvl_name},**{str(self.params)})"
         return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},**{str(self.params)})"
-
+    
     @classmethod
-
-    
-          
-            
-    
-
-          
-          Expand Down
-          
-            
-    
-
-          
-          Expand Up
-    
-    @@ -673,7 +670,10 @@ def __init__(self, toplvl_name: str):
-  
     def test(cls):
         from glayout.routing.c_route import c_route
         tests = list()
         tests.append([c_route,"name_of_port_1","name_of_port_2","cwidth of 4 width1=3"])
         for testinst in tests:
             print(Route(*testinst).get_code())
+
+
+
 # Top level Code Relational table
 class GlayoutCode(GlayoutAction):
     """Stores all needed information to create Glayout code in relation tables
     GlayoutActions require some general context provided by the GlayoutCode class"""
+
     # each table is implemented as a list of dictionaries
     def __init__(self, toplvl_name: str):
         self.toplvl_name = toplvl_name.replace(" ","_").strip()
@@ -673,17 +677,6 @@ class GlayoutCode(GlayoutAction):
         # import routing funcs
         self.update_import_table(["smart route","smart","smart_route"],"smart_route","glayout.routing.smart_route")
         self.update_import_table(["L route","L_route","l route","l_route"],"L_route","glayout.routing.L_route")
-
-    
-          
-            
-    
-
-          
-          Expand Down
-    
-    
-  
         self.update_import_table(["C route","C_route","c route","c_route"],"c_route","glayout.routing.c_route")
         self.update_import_table(["straight route","straight_route"],"straight_route","glayout.routing.straight_route")
         # import general utils
@@ -742,7 +735,7 @@ class GlayoutCode(GlayoutAction):
             current_val = self.__placed_noname_objs.get(generator_id,int(0))
             self.__placed_noname_objs[generator_id] = current_val + 1
             component_name = generator_id + str(current_val)
-        self.bulk_action_table.append(PlaceCell(self.toplvl_name, self.search_import_table(generator_id), component_name, user_input_parameters, [param.varname for param in self.parameter_table]))
+        self.bulk_action_table.append(PlaceCell(self.toplvl_name, self.search_import_table(generator_id), component_name, user_input_parameters, self.get_params_and_vars()))
     
     def update_move_table(self, move_type: str, name_of_component_to_move: str, *args, **kwargs):
         """move_type can be absolute, relative"""
@@ -773,7 +766,18 @@ class GlayoutCode(GlayoutAction):
                     break
         else:
             compref = None
-        self.bulk_action_table.append(Route(self.toplvl_name,self.search_import_table(route_type),port1,port2,parameters,[param.varname for param in self.parameter_table],compref))
+        self.bulk_action_table.append(Route(self.toplvl_name,self.search_import_table(route_type),port1,port2,parameters,self.get_params_and_vars(),compref))
+    
+    def get_params_and_vars(self) -> list[str]:
+        """Get the names of parameters and variables.
+        This method retrieves the names of parameters from the parameter table and the names of variables created
+        by 'CreateWorkingVariable' actions from the bulk action table.
+        Returns:
+            list[str]: A list containing the names of parameters and variables.
+        """
+        params = [param.varname for param in self.parameter_table]
+        variables = [variable.varname for variable in self.bulk_action_table if isinstance(variable,CreateWorkingVariable)]
+        return params + variables
     
     def get_code(self) -> str:
         # produce all import code
@@ -828,6 +832,7 @@ class GlayoutCode(GlayoutAction):
             if isinstance(action,PlaceCell):
                 names.append(action.name)
         return names
+
     def find_first_generator_id(self, sentence: str) -> str:
         """returns the longest generator id in the given sentence
         should only be used on sentences which for sure have a generator id in them
@@ -844,3 +849,7 @@ class GlayoutCode(GlayoutAction):
             raise LookupError("no known generator id was found in the provided sentence")
         # prefer longer strings
         return max(genid_candidates, key=len)
+
+
+
+
